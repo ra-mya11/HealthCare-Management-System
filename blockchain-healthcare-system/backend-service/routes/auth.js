@@ -1,52 +1,62 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-const { auth } = require('../middleware/auth');
+const express = require("express");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
+const { auth } = require("../middleware/auth");
 
 const router = express.Router();
 
 // Register
-router.post('/register', async (req, res) => {
+router.post("/register", async (req, res) => {
   try {
-    const { name, email, password, role, phone, dateOfBirth, gender, specialization, licenseNumber } = req.body;
-    
+    const {
+      name,
+      email,
+      password,
+      role,
+      phone,
+      dateOfBirth,
+      gender,
+      specialization,
+      licenseNumber,
+    } = req.body;
+
     // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ error: 'Email already registered' });
+      return res.status(400).json({ error: "Email already registered" });
     }
-    
+
     // Create user
     const user = new User({
       name,
       email,
       password,
-      role: role || 'patient',
+      role: role || "patient",
       phone,
       dateOfBirth,
       gender,
       specialization,
-      licenseNumber
+      licenseNumber,
     });
-    
+
     await user.save();
-    
+
     // Generate token
     const token = jwt.sign(
       { userId: user._id, role: user.role },
-      process.env.JWT_SECRET || 'your-secret-key',
-      { expiresIn: '7d' }
+      process.env.JWT_SECRET || "your-secret-key",
+      { expiresIn: "7d" },
     );
-    
+
     res.status(201).json({
-      message: 'User registered successfully',
+      message: "User registered successfully",
       token,
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role
-      }
+        role: user.role,
+      },
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -54,39 +64,39 @@ router.post('/register', async (req, res) => {
 });
 
 // Login
-router.post('/login', async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    
+
     // Find user
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: "Invalid credentials" });
     }
-    
+
     // Check password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: "Invalid credentials" });
     }
-    
+
     // Generate token
     const token = jwt.sign(
       { userId: user._id, role: user.role },
-      process.env.JWT_SECRET || 'your-secret-key',
-      { expiresIn: '7d' }
+      process.env.JWT_SECRET || "your-secret-key",
+      { expiresIn: "7d" },
     );
-    
+
     res.json({
-      message: 'Login successful',
+      message: "Login successful",
       token,
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
-        walletAddress: user.walletAddress
-      }
+        walletAddress: user.walletAddress,
+      },
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -94,9 +104,9 @@ router.post('/login', async (req, res) => {
 });
 
 // Get current user
-router.get('/me', auth, async (req, res) => {
+router.get("/me", auth, async (req, res) => {
   try {
-    const user = await User.findById(req.userId).select('-password');
+    const user = await User.findById(req.userId).select("-password");
     res.json(user);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -104,11 +114,11 @@ router.get('/me', auth, async (req, res) => {
 });
 
 // Update wallet address
-router.patch('/wallet', auth, async (req, res) => {
+router.patch("/wallet", auth, async (req, res) => {
   try {
     const { walletAddress } = req.body;
     await User.findByIdAndUpdate(req.userId, { walletAddress });
-    res.json({ message: 'Wallet address updated' });
+    res.json({ message: "Wallet address updated" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

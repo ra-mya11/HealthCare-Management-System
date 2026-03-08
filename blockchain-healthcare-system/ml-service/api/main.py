@@ -19,16 +19,18 @@ app.add_middleware(
 )
 
 # Load models
-MODEL_PATH = "../models"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MODEL_PATH = os.path.join(BASE_DIR, "models")
 
 try:
-    diabetes_model = joblib.load(f"{MODEL_PATH}/diabetes_model.pkl")
-    diabetes_scaler = joblib.load(f"{MODEL_PATH}/diabetes_scaler.pkl")
-    heart_model = joblib.load(f"{MODEL_PATH}/heart_model.pkl")
-    heart_scaler = joblib.load(f"{MODEL_PATH}/heart_scaler.pkl")
+    diabetes_model = joblib.load(os.path.join(MODEL_PATH, "diabetes_model.pkl"))
+    diabetes_scaler = joblib.load(os.path.join(MODEL_PATH, "diabetes_scaler.pkl"))
+    heart_model = joblib.load(os.path.join(MODEL_PATH, "heart_model.pkl"))
+    heart_scaler = joblib.load(os.path.join(MODEL_PATH, "heart_scaler.pkl"))
     print("✓ Models loaded successfully")
 except Exception as e:
     print(f"Error loading models: {e}")
+    print(f"Looking in: {MODEL_PATH}")
     print("Please run train_models.py first")
 
 # Request models

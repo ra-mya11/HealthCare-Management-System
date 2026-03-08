@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { getMedicalRecords } from '../services/api';
+import React, { useState, useEffect } from "react";
+import { getMedicalRecords } from "../services/api";
 
 function MedicalRecords() {
   const [records, setRecords] = useState([]);
@@ -14,20 +14,26 @@ function MedicalRecords() {
       const data = await getMedicalRecords();
       setRecords(data);
     } catch (error) {
-      console.error('Failed to fetch records');
+      console.error("Failed to fetch records");
     } finally {
       setLoading(false);
     }
   };
 
   const getRecordIcon = (type) => {
-    switch(type) {
-      case 'lab_report': return '🧪';
-      case 'prescription': return '💊';
-      case 'diagnosis': return '🩺';
-      case 'ai_prediction': return '🤖';
-      case 'vitals': return '❤️';
-      default: return '📄';
+    switch (type) {
+      case "lab_report":
+        return "🧪";
+      case "prescription":
+        return "💊";
+      case "diagnosis":
+        return "🩺";
+      case "ai_prediction":
+        return "🤖";
+      case "vitals":
+        return "❤️";
+      default:
+        return "📄";
     }
   };
 
@@ -36,7 +42,7 @@ function MedicalRecords() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="container mx-auto p-4 space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">📋 Medical Records</h2>
         <div className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm">
@@ -47,33 +53,42 @@ function MedicalRecords() {
       {records.length === 0 ? (
         <div className="bg-white rounded-xl shadow-md p-12 text-center">
           <p className="text-gray-600">No medical records found</p>
-          <p className="text-sm text-gray-500 mt-2">Your doctor will upload records after consultation</p>
+          <p className="text-sm text-gray-500 mt-2">
+            Your doctor will upload records after consultation
+          </p>
         </div>
       ) : (
         <div className="grid gap-4">
           {records.map((record) => (
-            <div key={record._id} className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition">
+            <div
+              key={record._id}
+              className="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-transform transform hover:-translate-y-1"
+            >
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4 flex-1">
-                  <div className="text-4xl">{getRecordIcon(record.recordType)}</div>
+                  <div className="text-4xl">
+                    {getRecordIcon(record.recordType)}
+                  </div>
                   <div className="flex-1">
                     <h3 className="font-semibold text-lg capitalize">
-                      {record.recordType.replace('_', ' ')}
+                      {record.recordType.replace("_", " ")}
                     </h3>
                     <p className="text-gray-600 text-sm mt-1">
-                      {new Date(record.createdAt).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
+                      {new Date(record.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
                       })}
                     </p>
-                    
+
                     {record.vitals && (
                       <div className="mt-3 grid grid-cols-2 md:grid-cols-4 gap-3">
                         {record.vitals.glucose && (
                           <div className="bg-gray-50 p-2 rounded">
                             <p className="text-xs text-gray-600">Glucose</p>
-                            <p className="font-semibold">{record.vitals.glucose} mg/dL</p>
+                            <p className="font-semibold">
+                              {record.vitals.glucose} mg/dL
+                            </p>
                           </div>
                         )}
                         {record.vitals.bmi && (
@@ -85,13 +100,17 @@ function MedicalRecords() {
                         {record.vitals.bloodPressure && (
                           <div className="bg-gray-50 p-2 rounded">
                             <p className="text-xs text-gray-600">BP</p>
-                            <p className="font-semibold">{record.vitals.bloodPressure} mmHg</p>
+                            <p className="font-semibold">
+                              {record.vitals.bloodPressure} mmHg
+                            </p>
                           </div>
                         )}
                         {record.vitals.cholesterol && (
                           <div className="bg-gray-50 p-2 rounded">
                             <p className="text-xs text-gray-600">Cholesterol</p>
-                            <p className="font-semibold">{record.vitals.cholesterol} mg/dL</p>
+                            <p className="font-semibold">
+                              {record.vitals.cholesterol} mg/dL
+                            </p>
                           </div>
                         )}
                       </div>
@@ -135,7 +154,7 @@ function MedicalRecords() {
       <div className="bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-xl shadow-md p-6">
         <h3 className="text-lg font-semibold mb-2">🔐 Blockchain Security</h3>
         <p className="text-sm opacity-90">
-          All your medical records are secured on the Ethereum blockchain. 
+          All your medical records are secured on the Ethereum blockchain.
           Records are uploaded by your doctor and cannot be modified.
         </p>
         <div className="mt-4 grid grid-cols-3 gap-4 text-center">

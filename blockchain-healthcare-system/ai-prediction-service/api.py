@@ -1,13 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Dict, List, Optional
-import joblib
+from typing import Dict, List
 import numpy as np
-import json
-import os
 from datetime import datetime
-import sys
 
 app = FastAPI(title="Disease Prediction API", version="1.0.0")
 
@@ -20,7 +16,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Define symptoms and disease-department mapping
+# Define symptoms
 SYMPTOMS = [
     'fever', 'headache', 'fatigue', 'chest_pain', 'shortness_of_breath',
     'cough', 'nausea', 'vomiting', 'abdominal_pain', 'dizziness',
@@ -28,6 +24,7 @@ SYMPTOMS = [
     'vision_problems', 'back_pain', 'sore_throat', 'body_ache'
 ]
 
+# Disease to Department Mapping
 DISEASE_DEPARTMENT_MAPPING = {
     'heart_disease': 'Cardiology',
     'migraine': 'Neurology',
@@ -49,77 +46,28 @@ DISEASE_DEPARTMENT_MAPPING = {
     'acne': 'Dermatology'
 }
 
-# Define request/response models
+# Request/Response Models
 class SymptomInput(BaseModel):
     age: int
-    gender: str  # 'male', 'female', 'other'
-    symptoms: Dict[str, float]  # symptom_name: severity (0-3)
+    gender: str
+    symptoms: Dict[str, float]
 
 class PredictionResponse(BaseModel):
     predicted_disease: str
     confidence: float
-    risk_level: str  # Low, Medium, High
+    risk_level: str
     recommended_department: str
-    explanation: Dict[str, float]  # feature importance explanation
+    explanation: Dict[str, float]
     timestamp: str
 
-# Load or create dummy model
-MODEL_PATH = 'disease_prediction_model.pkl'
-
-try:
-    if os.path.exists(MODEL_PATH):
-        model = joblib.load(MODEL_PATH)
-        print("✓ Disease prediction model loaded")
-    else:
-        print("⚠ Model not found. Using prediction rules.")
-        model = None
-except Exception as e:
-    print(f"Error loading model: {e}")
-    model = None
-
-# Helper functions
-def get_risk_level(confidence: float) -> str:
-    """Determine risk level based on confidence"""
-    if confidence >= 75:
-        return "High"
-    elif confidence >= 50:
-        return "Medium"
-    else:
-        return "Low"
-
-def prepare_features(age: int, gender: str, symptoms: Dict[str, float]) -> np.ndarray:
-    """Prepare input features for the model"""
-    feature_vector = []
-    
-    # Add symptom features (0-3 scale)
-    for symptom in SYMPTOMS:
-        severity = symptoms.get(symptom, 0)
-        feature_vector.append(max(0, min(3, severity)))  # Clamp between 0 and 3
-    
-    # Add age
-    feature_vector.append(age)
-    
-    # Add gender encoding
-    if gender.lower() == 'male':
-        feature_vector.append(1)
-        feature_vector.append(0)
-    elif gender.lower() == 'female':
-        feature_vector.append(0)
-        feature_vector.append(1)
-    else:
-        feature_vector.append(0)
-        feature_vector.append(0)
-    
-    return np.array([feature_vector])
-
+# Helper Functions
 def predict_by_rules(age: int, gender: str, symptoms: Dict[str, float]) -> tuple:
-    """Rule-based prediction when ML model is not available"""
+    """Rule-based disease prediction"""
     relevant_symptoms = {k: v for k, v in symptoms.items() if v > 0}
     
-    # Score diseases based on symptoms
     disease_scores = {}
     
-    # Cardiology conditions
+    # Cardiology
     if relevant_symptoms.get('chest_pain', 0) >= 2 or (relevant_symptoms.get('shortness_of_breath', 0) >= 2 and age > 40):
         disease_scores['heart_disease'] = 0.85
     if relevant_symptoms.get('headache', 0) >= 2 and relevant_symptoms.get('dizziness', 0) >= 1:
@@ -135,7 +83,7 @@ def predict_by_rules(age: int, gender: str, symptoms: Dict[str, float]) -> tuple
     if relevant_symptoms.get('back_pain', 0) >= 2:
         disease_scores['arthritis'] = max(disease_scores.get('arthritis', 0), 0.65)
     
-    # Pulmonology/Respiratory
+    # Pulmonology
     if relevant_symptoms.get('cough', 0) >= 2 and relevant_symptoms.get('shortness_of_breath', 0) >= 2:
         disease_scores['pneumonia'] = 0.85
     if relevant_symptoms.get('cough', 0) >= 2 and relevant_symptoms.get('shortness_of_breath', 0) >= 1:
@@ -166,24 +114,29 @@ def predict_by_rules(age: int, gender: str, symptoms: Dict[str, float]) -> tuple
     if relevant_symptoms.get('fever', 0) >= 2 and (relevant_symptoms.get('cough', 0) >= 1 or relevant_symptoms.get('body_ache', 0) >= 1):
         disease_scores['flu'] = max(disease_scores.get('flu', 0), 0.70)
     
-    # Default to general medicine if no strong match
+    # Default
     if not disease_scores:
-        disease_scores['general_health_checkup'] = 0.50
+        disease_scores['general_checkup'] = 0.50
     
-    # Get highest scoring disease
     predicted_disease = max(disease_scores, key=disease_scores.get)
     confidence = disease_scores[predicted_disease]
     
     return predicted_disease, confidence
 
+def get_risk_level(confidence: float) -> str:
+    """Determine risk level"""
+    if confidence >= 0.75:
+        return "High"
+    elif confidence >= 0.50:
+        return "Medium"
+    else:
+        return "Low"
+
 def get_explanation(symptoms: Dict[str, float], top_n: int = 5) -> Dict[str, float]:
-    """Generate explanation showing which symptoms contributed most"""
+    """Get explanation for prediction"""
     relevant_symptoms = {k: v for k, v in symptoms.items() if v > 0}
-    
-    # Sort by severity
     sorted_symptoms = dict(sorted(relevant_symptoms.items(), key=lambda x: x[1], reverse=True)[:top_n])
     
-    # Normalize to 0-1 range
     if sorted_symptoms:
         max_val = max(sorted_symptoms.values())
         return {k: round(v / max_val, 2) for k, v in sorted_symptoms.items()}
@@ -192,7 +145,7 @@ def get_explanation(symptoms: Dict[str, float], top_n: int = 5) -> Dict[str, flo
 # API Endpoints
 @app.get("/health")
 async def health_check():
-    """Health check endpoint"""
+    """Health check"""
     return {
         "status": "healthy",
         "service": "Disease Prediction API",
@@ -201,21 +154,7 @@ async def health_check():
 
 @app.post("/predict-disease", response_model=PredictionResponse)
 async def predict_disease(input_data: SymptomInput):
-    """
-    Predict disease based on symptoms, age, and gender
-    
-    Example input:
-    {
-        "age": 45,
-        "gender": "male",
-        "symptoms": {
-            "chest_pain": 2,
-            "shortness_of_breath": 2,
-            "fatigue": 3,
-            "headache": 1
-        }
-    }
-    """
+    """Predict disease based on symptoms"""
     try:
         # Validate input
         if input_data.age < 0 or input_data.age > 150:
@@ -225,14 +164,8 @@ async def predict_disease(input_data: SymptomInput):
             raise ValueError("Gender must be 'male', 'female', or 'other'")
         
         # Get prediction
-        if model is not None:
-            X_features = prepare_features(input_data.age, input_data.gender, input_data.symptoms)
-            prediction = model.predict(X_features)[0]
-            probabilities = model.predict_proba(X_features)[0]
-            confidence = float(np.max(probabilities)) * 100
-        else:
-            prediction, confidence = predict_by_rules(input_data.age, input_data.gender, input_data.symptoms)
-            confidence = confidence * 100
+        prediction, confidence = predict_by_rules(input_data.age, input_data.gender, input_data.symptoms)
+        confidence_percent = confidence * 100
         
         # Get department
         department = DISEASE_DEPARTMENT_MAPPING.get(prediction, "General Medicine")
@@ -245,7 +178,7 @@ async def predict_disease(input_data: SymptomInput):
         
         return PredictionResponse(
             predicted_disease=prediction.replace('_', ' ').title(),
-            confidence=round(confidence, 2),
+            confidence=round(confidence_percent, 2),
             risk_level=risk_level,
             recommended_department=department,
             explanation=explanation,
@@ -259,7 +192,7 @@ async def predict_disease(input_data: SymptomInput):
 
 @app.get("/symptoms")
 async def get_available_symptoms():
-    """Get list of available symptoms"""
+    """Get available symptoms"""
     return {
         "symptoms": SYMPTOMS,
         "severity_scale": {
@@ -272,7 +205,7 @@ async def get_available_symptoms():
 
 @app.get("/departments")
 async def get_departments():
-    """Get all available departments and their disease mappings"""
+    """Get available departments"""
     departments = {}
     for disease, dept in DISEASE_DEPARTMENT_MAPPING.items():
         if dept not in departments:
@@ -283,110 +216,14 @@ async def get_departments():
 
 @app.get("/model-info")
 async def get_model_info():
-    """Get information about the prediction system"""
+    """Get model information"""
     return {
         "system_type": "Symptom-Based Disease Prediction",
-        "prediction_method": "ML Model" if model else "Rule-Based",
-        "features": len(SYMPTOMS) + 3,  # symptoms + age + gender
+        "prediction_method": "Rule-Based AI",
         "symptom_count": len(SYMPTOMS),
         "diseases": list(set(DISEASE_DEPARTMENT_MAPPING.values())),
         "timestamp": datetime.now().isoformat()
     }
-
-class PatientData(BaseModel):
-    age: int
-    bp_systolic: int
-    bp_diastolic: int
-    sugar_level: float
-    bmi: float
-    cholesterol: int
-    symptoms: List[str] = []
-
-class PredictionResponse(BaseModel):
-    diabetes_risk: float
-    heart_disease_risk: float
-    hypertension_risk: float
-    diabetes_prediction: str
-    heart_disease_prediction: str
-    hypertension_prediction: str
-    overall_risk: str
-    recommendations: List[str]
-
-@app.get("/")
-def root():
-    return {"message": "AI Disease Prediction API", "status": "running"}
-
-@app.post("/predict", response_model=PredictionResponse)
-def predict_disease(patient: PatientData):
-    try:
-        # Prepare features
-        features = np.array([[
-            patient.age,
-            patient.bp_systolic,
-            patient.bp_diastolic,
-            patient.sugar_level,
-            patient.bmi,
-            patient.cholesterol
-        ]])
-        
-        # Diabetes prediction
-        features_diabetes = diabetes_scaler.transform(features)
-        diabetes_prob = diabetes_model.predict_proba(features_diabetes)[0][1]
-        diabetes_pred = "High Risk" if diabetes_prob > 0.5 else "Low Risk"
-        
-        # Heart disease prediction
-        features_heart = heart_scaler.transform(features)
-        heart_prob = heart_model.predict_proba(features_heart)[0][1]
-        heart_pred = "High Risk" if heart_prob > 0.5 else "Low Risk"
-        
-        # Hypertension prediction
-        features_hypertension = hypertension_scaler.transform(features)
-        hypertension_prob = hypertension_model.predict_proba(features_hypertension)[0][1]
-        hypertension_pred = "High Risk" if hypertension_prob > 0.5 else "Low Risk"
-        
-        # Overall risk
-        avg_risk = (diabetes_prob + heart_prob + hypertension_prob) / 3
-        if avg_risk > 0.7:
-            overall = "High Risk"
-        elif avg_risk > 0.4:
-            overall = "Moderate Risk"
-        else:
-            overall = "Low Risk"
-        
-        # Recommendations
-        recommendations = []
-        if diabetes_prob > 0.5:
-            recommendations.append("Monitor blood sugar levels regularly")
-            recommendations.append("Maintain healthy diet low in sugar")
-        if heart_prob > 0.5:
-            recommendations.append("Reduce cholesterol intake")
-            recommendations.append("Regular cardiovascular exercise")
-        if hypertension_prob > 0.5:
-            recommendations.append("Reduce sodium intake")
-            recommendations.append("Monitor blood pressure daily")
-        if patient.bmi > 30:
-            recommendations.append("Weight management recommended")
-        if not recommendations:
-            recommendations.append("Maintain healthy lifestyle")
-            recommendations.append("Regular health checkups")
-        
-        return PredictionResponse(
-            diabetes_risk=round(diabetes_prob * 100, 2),
-            heart_disease_risk=round(heart_prob * 100, 2),
-            hypertension_risk=round(hypertension_prob * 100, 2),
-            diabetes_prediction=diabetes_pred,
-            heart_disease_prediction=heart_pred,
-            hypertension_prediction=hypertension_pred,
-            overall_risk=overall,
-            recommendations=recommendations
-        )
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/health")
-def health_check():
-    return {"status": "healthy", "models_loaded": True}
 
 if __name__ == "__main__":
     import uvicorn

@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema({
     enum: ['patient', 'doctor', 'admin'],
     default: 'patient'
   },
+  enabled: {
+    type: Boolean,
+    default: true
+  },
   walletAddress: {
     type: String,
     sparse: true

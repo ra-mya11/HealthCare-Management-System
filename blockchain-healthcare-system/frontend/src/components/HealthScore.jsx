@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { getHealthScore } from '../services/api';
+import React, { useState, useEffect } from "react";
+import { getHealthScore } from "../services/api";
 
 function HealthScore() {
   const [healthData, setHealthData] = useState(null);
@@ -14,7 +14,7 @@ function HealthScore() {
       const data = await getHealthScore();
       setHealthData(data);
     } catch (error) {
-      console.error('Failed to fetch health score');
+      console.error("Failed to fetch health score");
     } finally {
       setLoading(false);
     }
@@ -28,22 +28,26 @@ function HealthScore() {
     return (
       <div className="bg-white rounded-xl shadow-md p-12 text-center">
         <p className="text-gray-600 mb-4">No health data available</p>
-        <p className="text-sm text-gray-500">Complete an AI health assessment to see your score</p>
+        <p className="text-sm text-gray-500">
+          Complete an AI health assessment to see your score
+        </p>
       </div>
     );
   }
 
   const getScoreColor = (score) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 80) return "text-green-600";
+    if (score >= 60) return "text-yellow-600";
+    return "text-red-600";
   };
 
   return (
-    <div className="space-y-6">
+    <div className="container mx-auto p-4 space-y-6">
       {/* Overall Score */}
-      <div className="bg-gradient-to-br from-blue-500 to-purple-600 text-white rounded-xl shadow-lg p-8">
-        <h2 className="text-2xl font-bold mb-6 text-center">Your Digital Health Score</h2>
+      <div className="bg-gradient-to-br from-blue-500 to-purple-600 text-white rounded-xl shadow-lg p-8 animate-float">
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          Your Digital Health Score
+        </h2>
         <div className="text-center">
           <div className="inline-block">
             <div className="relative">
@@ -70,7 +74,9 @@ function HealthScore() {
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
                 <div>
-                  <p className="text-6xl font-bold">{healthData.healthScore.overall}</p>
+                  <p className="text-6xl font-bold">
+                    {healthData.healthScore.overall}
+                  </p>
                   <p className="text-sm opacity-90">out of 100</p>
                 </div>
               </div>
@@ -87,7 +93,9 @@ function HealthScore() {
         <div className="bg-white rounded-xl shadow-md p-6">
           <h3 className="text-lg font-semibold mb-4">🏥 Clinical Score</h3>
           <div className="text-center">
-            <p className={`text-5xl font-bold ${getScoreColor(healthData.healthScore.clinical)}`}>
+            <p
+              className={`text-5xl font-bold ${getScoreColor(healthData.healthScore.clinical)}`}
+            >
               {healthData.healthScore.clinical}
             </p>
             <p className="text-gray-600 mt-2">Based on vitals</p>
@@ -95,7 +103,10 @@ function HealthScore() {
           <div className="mt-4 pt-4 border-t">
             <p className="text-sm text-gray-600">Weight: 40%</p>
             <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-              <div className="bg-blue-600 h-2 rounded-full" style={{width: '40%'}}></div>
+              <div
+                className="bg-blue-600 h-2 rounded-full"
+                style={{ width: "40%" }}
+              ></div>
             </div>
           </div>
         </div>
@@ -103,7 +114,9 @@ function HealthScore() {
         <div className="bg-white rounded-xl shadow-md p-6">
           <h3 className="text-lg font-semibold mb-4">🤖 AI Risk Score</h3>
           <div className="text-center">
-            <p className={`text-5xl font-bold ${getScoreColor(healthData.healthScore.aiRisk)}`}>
+            <p
+              className={`text-5xl font-bold ${getScoreColor(healthData.healthScore.aiRisk)}`}
+            >
               {healthData.healthScore.aiRisk}
             </p>
             <p className="text-gray-600 mt-2">Disease risk analysis</p>
@@ -111,7 +124,10 @@ function HealthScore() {
           <div className="mt-4 pt-4 border-t">
             <p className="text-sm text-gray-600">Weight: 40%</p>
             <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-              <div className="bg-purple-600 h-2 rounded-full" style={{width: '40%'}}></div>
+              <div
+                className="bg-purple-600 h-2 rounded-full"
+                style={{ width: "40%" }}
+              ></div>
             </div>
           </div>
         </div>
@@ -119,7 +135,9 @@ function HealthScore() {
         <div className="bg-white rounded-xl shadow-md p-6">
           <h3 className="text-lg font-semibold mb-4">🏃 Lifestyle Score</h3>
           <div className="text-center">
-            <p className={`text-5xl font-bold ${getScoreColor(healthData.healthScore.lifestyle)}`}>
+            <p
+              className={`text-5xl font-bold ${getScoreColor(healthData.healthScore.lifestyle)}`}
+            >
               {healthData.healthScore.lifestyle}
             </p>
             <p className="text-gray-600 mt-2">Activity & habits</p>
@@ -127,7 +145,10 @@ function HealthScore() {
           <div className="mt-4 pt-4 border-t">
             <p className="text-sm text-gray-600">Weight: 20%</p>
             <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-              <div className="bg-green-600 h-2 rounded-full" style={{width: '20%'}}></div>
+              <div
+                className="bg-green-600 h-2 rounded-full"
+                style={{ width: "20%" }}
+              ></div>
             </div>
           </div>
         </div>
@@ -139,26 +160,35 @@ function HealthScore() {
           <h3 className="text-lg font-semibold mb-4">🩺 Diabetes Risk</h3>
           <div className="flex items-center justify-between mb-2">
             <span className="text-gray-600">Risk Level:</span>
-            <span className={`font-bold px-3 py-1 rounded-full text-sm ${
-              healthData.predictions.diabetes.risk_level === 'Low' ? 'bg-green-100 text-green-700' :
-              healthData.predictions.diabetes.risk_level === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
-              'bg-red-100 text-red-700'
-            }`}>
+            <span
+              className={`font-bold px-3 py-1 rounded-full text-sm ${
+                healthData.predictions.diabetes.risk_level === "Low"
+                  ? "bg-green-100 text-green-700"
+                  : healthData.predictions.diabetes.risk_level === "Medium"
+                    ? "bg-yellow-100 text-yellow-700"
+                    : "bg-red-100 text-red-700"
+              }`}
+            >
               {healthData.predictions.diabetes.risk_level}
             </span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-3">
-            <div 
+            <div
               className={`h-3 rounded-full ${
-                healthData.predictions.diabetes.risk_level === 'Low' ? 'bg-green-500' :
-                healthData.predictions.diabetes.risk_level === 'Medium' ? 'bg-yellow-500' :
-                'bg-red-500'
+                healthData.predictions.diabetes.risk_level === "Low"
+                  ? "bg-green-500"
+                  : healthData.predictions.diabetes.risk_level === "Medium"
+                    ? "bg-yellow-500"
+                    : "bg-red-500"
               }`}
-              style={{width: `${healthData.predictions.diabetes.probability * 100}%`}}
+              style={{
+                width: `${healthData.predictions.diabetes.probability * 100}%`,
+              }}
             ></div>
           </div>
           <p className="text-sm text-gray-600 mt-2">
-            Probability: {(healthData.predictions.diabetes.probability * 100).toFixed(1)}%
+            Probability:{" "}
+            {(healthData.predictions.diabetes.probability * 100).toFixed(1)}%
           </p>
         </div>
 
@@ -166,26 +196,36 @@ function HealthScore() {
           <h3 className="text-lg font-semibold mb-4">❤️ Heart Disease Risk</h3>
           <div className="flex items-center justify-between mb-2">
             <span className="text-gray-600">Risk Level:</span>
-            <span className={`font-bold px-3 py-1 rounded-full text-sm ${
-              healthData.predictions.heartDisease.risk_level === 'Low' ? 'bg-green-100 text-green-700' :
-              healthData.predictions.heartDisease.risk_level === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
-              'bg-red-100 text-red-700'
-            }`}>
+            <span
+              className={`font-bold px-3 py-1 rounded-full text-sm ${
+                healthData.predictions.heartDisease.risk_level === "Low"
+                  ? "bg-green-100 text-green-700"
+                  : healthData.predictions.heartDisease.risk_level === "Medium"
+                    ? "bg-yellow-100 text-yellow-700"
+                    : "bg-red-100 text-red-700"
+              }`}
+            >
               {healthData.predictions.heartDisease.risk_level}
             </span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-3">
-            <div 
+            <div
               className={`h-3 rounded-full ${
-                healthData.predictions.heartDisease.risk_level === 'Low' ? 'bg-green-500' :
-                healthData.predictions.heartDisease.risk_level === 'Medium' ? 'bg-yellow-500' :
-                'bg-red-500'
+                healthData.predictions.heartDisease.risk_level === "Low"
+                  ? "bg-green-500"
+                  : healthData.predictions.heartDisease.risk_level === "Medium"
+                    ? "bg-yellow-500"
+                    : "bg-red-500"
               }`}
-              style={{width: `${healthData.predictions.heartDisease.probability * 100}%`}}
+              style={{
+                width: `${healthData.predictions.heartDisease.probability * 100}%`,
+              }}
             ></div>
           </div>
           <p className="text-sm text-gray-600 mt-2">
-            Probability: {(healthData.predictions.heartDisease.probability * 100).toFixed(1)}%
+            Probability:{" "}
+            {(healthData.predictions.heartDisease.probability * 100).toFixed(1)}
+            %
           </p>
         </div>
       </div>

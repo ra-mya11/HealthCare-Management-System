@@ -1,10 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/Login';
-import PatientDashboard from './pages/PatientDashboard';
-import DoctorDashboard from './pages/DoctorDashboard';
-import AdminDashboard from './pages/AdminDashboard';
-import { getToken } from './utils/auth';
+import React, { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import Login from "./pages/Login";
+import PatientDashboard from "./pages/PatientDashboard";
+import DoctorDashboard from "./pages/DoctorDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import { getToken } from "./utils/auth";
+import Navbar from "./components/Navbar";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -12,7 +18,7 @@ function App() {
 
   useEffect(() => {
     const token = getToken();
-    const user = localStorage.getItem('user');
+    const user = localStorage.getItem("user");
     if (token && user) {
       setIsAuthenticated(true);
       setUserRole(JSON.parse(user).role);
@@ -20,12 +26,12 @@ function App() {
   }, []);
 
   const getDashboard = () => {
-    switch(userRole) {
-      case 'patient':
+    switch (userRole) {
+      case "patient":
         return <PatientDashboard setAuth={setIsAuthenticated} />;
-      case 'doctor':
+      case "doctor":
         return <DoctorDashboard setAuth={setIsAuthenticated} />;
-      case 'admin':
+      case "admin":
         return <AdminDashboard setAuth={setIsAuthenticated} />;
       default:
         return <Navigate to="/login" />;
@@ -34,15 +40,24 @@ function App() {
 
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-gray-100 to-white">
+        <Navbar setAuth={setIsAuthenticated} />
         <Routes>
-          <Route 
-            path="/login" 
-            element={!isAuthenticated ? <Login setAuth={setIsAuthenticated} setRole={setUserRole} /> : <Navigate to="/dashboard" />} 
+          <Route
+            path="/login"
+            element={
+              !isAuthenticated ? (
+                <Login setAuth={setIsAuthenticated} setRole={setUserRole} />
+              ) : (
+                <Navigate to="/dashboard" />
+              )
+            }
           />
-          <Route 
-            path="/dashboard" 
-            element={isAuthenticated ? getDashboard() : <Navigate to="/login" />} 
+          <Route
+            path="/dashboard"
+            element={
+              isAuthenticated ? getDashboard() : <Navigate to="/login" />
+            }
           />
           <Route path="/" element={<Navigate to="/dashboard" />} />
         </Routes>
