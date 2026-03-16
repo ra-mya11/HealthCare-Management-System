@@ -4,7 +4,7 @@
 import axios from "axios";
 import { getToken } from "../utils/auth";
 
-const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5003/api";
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080/api";
 
 // Add authorization header to all requests
 axios.interceptors.request.use(

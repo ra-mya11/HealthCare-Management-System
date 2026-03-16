@@ -1,4 +1,5 @@
 {
+  "proxy": "http://localhost:8080",
   "name": "healthcare-frontend",
   "version": "1.0.0",
   "private": true,

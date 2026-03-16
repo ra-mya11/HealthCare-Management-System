@@ -1,6 +1,8 @@
 package com.healthcare.medicalrecords.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.web3j.abi.FunctionEncoder;
@@ -27,8 +29,9 @@ import java.util.List;
  * Handles smart contract calls for medical record management
  */
 @Service
-@Slf4j
 public class BlockchainService {
+
+    private static final Logger log = LoggerFactory.getLogger(BlockchainService.class);
     
     private final Web3j web3j;
     private final Credentials credentials;

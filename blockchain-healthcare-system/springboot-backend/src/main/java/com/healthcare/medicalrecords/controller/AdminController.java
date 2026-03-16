@@ -4,6 +4,7 @@ import com.healthcare.medicalrecords.dto.AnalyticsDto;
 import com.healthcare.medicalrecords.dto.DoctorDto;
 import com.healthcare.medicalrecords.dto.UserDto;
 import com.healthcare.medicalrecords.entity.*;
+import com.healthcare.medicalrecords.model.MedicalRecord;
 import com.healthcare.medicalrecords.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;

@@ -2,8 +2,8 @@ package com.healthcare.medicalrecords.controller;
 
 import com.healthcare.medicalrecords.dto.*;
 import com.healthcare.medicalrecords.service.MedicalRecordService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,12 +20,16 @@ import java.time.LocalDateTime;
  */
 @RestController
 @RequestMapping("/api/records")
-@RequiredArgsConstructor
-@Slf4j
 @CrossOrigin(origins = "${cors.allowed.origins}")
 public class MedicalRecordController {
-    
+
+    private static final Logger log = LoggerFactory.getLogger(MedicalRecordController.class);
+
     private final MedicalRecordService service;
+
+    public MedicalRecordController(MedicalRecordService service) {
+        this.service = service;
+    }
     
     /**
      * Upload a new medical record
@@ -46,7 +50,7 @@ public class MedicalRecordController {
         
         if (file.isEmpty()) {
             return ResponseEntity.badRequest()
-                .body(new UploadResponse(null, null, null, "File is empty", false));
+                .body(UploadResponse.builder().recordId(null).ipfsHash(null).blockchainTxHash(null).message("File is empty").success(false).build());
         }
         
         UploadResponse response = service.uploadRecord(file, patientId, doctorId, recordType);

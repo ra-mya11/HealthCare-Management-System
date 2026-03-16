@@ -2,17 +2,19 @@ package com.healthcare.medicalrecords.controller;
 
 import com.healthcare.medicalrecords.dto.patient.*;
 import com.healthcare.medicalrecords.service.AuthService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@RequiredArgsConstructor
 @CrossOrigin(origins = "${cors.allowed.origins}")
 public class AuthController {
-    
+
     private final AuthService authService;
+
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
     
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {

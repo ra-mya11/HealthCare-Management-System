@@ -4,8 +4,10 @@ import com.healthcare.medicalrecords.dto.AnalyticsDto;
 import com.healthcare.medicalrecords.dto.DoctorDto;
 import com.healthcare.medicalrecords.dto.UserDto;
 import com.healthcare.medicalrecords.entity.*;
+import com.healthcare.medicalrecords.model.MedicalRecord;
 import com.healthcare.medicalrecords.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -16,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 public class AdminService {
 
-    @Autowired private UserRepository userRepository;
+    @Autowired private AdminUserRepository userRepository;
     @Autowired private DepartmentRepository departmentRepository;
     @Autowired private DoctorRepository doctorRepository;
     @Autowired private AppointmentRepository appointmentRepository;
@@ -167,7 +169,7 @@ public class AdminService {
     }
 
     public List<MedicalRecord> getPatientRecords(Long patientId) {
-        return recordRepository.findByPatientId(patientId);
+        return recordRepository.findByPatientId(String.valueOf(patientId));
     }
 
     public long countRecords() {

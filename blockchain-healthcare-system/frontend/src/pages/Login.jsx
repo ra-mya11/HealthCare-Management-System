@@ -26,9 +26,10 @@ function Login({ setAuth, setRole }) {
         : await register(formData);
 
       setToken(response.token);
-      localStorage.setItem("user", JSON.stringify(response.user));
+      const user = { userId: response.userId, email: response.email, name: response.name, role: response.role };
+      localStorage.setItem("user", JSON.stringify(user));
       setAuth(true);
-      setRole(response.user.role);
+      setRole(response.role);
       navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.error || "Authentication failed");

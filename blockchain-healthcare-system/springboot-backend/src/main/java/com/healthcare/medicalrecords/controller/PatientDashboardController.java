@@ -3,7 +3,6 @@ package com.healthcare.medicalrecords.controller;
 import com.healthcare.medicalrecords.dto.patient.ShareAccessRequest;
 import com.healthcare.medicalrecords.model.MedicalRecord;
 import com.healthcare.medicalrecords.service.PatientDashboardService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +13,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/patient")
-@RequiredArgsConstructor
 @CrossOrigin(origins = "${cors.allowed.origins}")
 public class PatientDashboardController {
-    
+
     private final PatientDashboardService dashboardService;
+
+    public PatientDashboardController(PatientDashboardService dashboardService) {
+        this.dashboardService = dashboardService;
+    }
     
     @GetMapping("/records")
     public ResponseEntity<List<MedicalRecord>> getMyRecords(Authentication auth) {

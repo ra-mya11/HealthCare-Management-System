@@ -2,7 +2,6 @@ package com.healthcare.medicalrecords.service;
 
 import com.healthcare.medicalrecords.dto.PredictionRequest;
 import com.healthcare.medicalrecords.dto.PredictionResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -11,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 public class AIPredictionService {
     
     @Value("${ai.service.url:http://localhost:8000}")

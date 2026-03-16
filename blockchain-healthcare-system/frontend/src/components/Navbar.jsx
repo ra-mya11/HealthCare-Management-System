@@ -4,7 +4,7 @@ import { removeToken } from "../utils/auth";
 
 export default function Navbar({ setAuth }) {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const user = JSON.parse(localStorage.getItem("user") || "null") || {};
 
   const handleLogout = () => {
     removeToken();

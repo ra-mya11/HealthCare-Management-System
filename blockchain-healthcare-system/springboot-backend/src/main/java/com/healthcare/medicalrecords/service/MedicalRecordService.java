@@ -3,8 +3,8 @@ package com.healthcare.medicalrecords.service;
 import com.healthcare.medicalrecords.dto.*;
 import com.healthcare.medicalrecords.model.MedicalRecord;
 import com.healthcare.medicalrecords.repository.MedicalRecordRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,18 +14,21 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-/**
- * Service for managing medical records with blockchain and IPFS integration
- */
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class MedicalRecordService {
-    
+
+    private static final Logger log = LoggerFactory.getLogger(MedicalRecordService.class);
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     private final MedicalRecordRepository repository;
     private final IPFSService ipfsService;
     private final BlockchainService blockchainService;
-    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    public MedicalRecordService(MedicalRecordRepository repository, IPFSService ipfsService, BlockchainService blockchainService) {
+        this.repository = repository;
+        this.ipfsService = ipfsService;
+        this.blockchainService = blockchainService;
+    }
     
     /**
      * Upload a new medical record to IPFS and blockchain

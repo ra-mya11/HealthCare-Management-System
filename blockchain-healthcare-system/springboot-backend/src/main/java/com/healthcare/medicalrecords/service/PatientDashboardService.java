@@ -4,17 +4,21 @@ import com.healthcare.medicalrecords.model.MedicalRecord;
 import com.healthcare.medicalrecords.model.User;
 import com.healthcare.medicalrecords.repository.MedicalRecordRepository;
 import com.healthcare.medicalrecords.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class PatientDashboardService {
-    
+
     private final MedicalRecordRepository recordRepository;
     private final UserRepository userRepository;
     private final IPFSService ipfsService;
+
+    public PatientDashboardService(MedicalRecordRepository recordRepository, UserRepository userRepository, IPFSService ipfsService) {
+        this.recordRepository = recordRepository;
+        this.userRepository = userRepository;
+        this.ipfsService = ipfsService;
+    }
     
     public List<MedicalRecord> getMyRecords(String userId) {
         return recordRepository.findByPatientId(userId);
