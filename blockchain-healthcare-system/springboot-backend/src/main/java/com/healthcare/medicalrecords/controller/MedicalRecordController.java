@@ -1,6 +1,7 @@
 package com.healthcare.medicalrecords.controller;
 
 import com.healthcare.medicalrecords.dto.*;
+import com.healthcare.medicalrecords.model.MedicalRecord;
 import com.healthcare.medicalrecords.service.MedicalRecordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * REST Controller for medical record management
@@ -202,6 +204,13 @@ public class MedicalRecordController {
     public ResponseEntity<String> healthCheck() {
         log.info("Health check requested");
         return ResponseEntity.ok("Medical Records Service is running");
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<MedicalRecord>> getAllRecords() {
+        log.info("Retrieving all records");
+        List<MedicalRecord> records = service.getAllRecords();
+        return ResponseEntity.ok(records);
     }
 }
 

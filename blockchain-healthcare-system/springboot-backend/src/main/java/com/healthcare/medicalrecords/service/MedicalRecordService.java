@@ -177,6 +177,10 @@ public class MedicalRecordService {
         log.info("Downloading record from IPFS: {}", ipfsHash);
         return ipfsService.downloadFile(ipfsHash);
     }
+
+    public List<MedicalRecord> getAllRecords() {
+        return repository.findAll();
+    }
     
     /**
      * Verify record integrity using blockchain

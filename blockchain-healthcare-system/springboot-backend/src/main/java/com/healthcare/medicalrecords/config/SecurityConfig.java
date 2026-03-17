@@ -25,8 +25,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/api/records/health").permitAll()
+                .requestMatchers("/api/auth/**", "/api/records/health", "/api/records/all").permitAll()
+                .requestMatchers("/api/admin/**").permitAll()
+                .requestMatchers("/api/appointments/doctors/available").permitAll()
                 .requestMatchers("/api/patient/**").hasAnyRole("PATIENT", "DOCTOR")
                 .anyRequest().authenticated()
             )

@@ -26,6 +26,15 @@ public class Appointment {
     @Column(name = "notes", columnDefinition = "LONGTEXT")
     private String notes;
 
+    @Column(name = "department", length = 100)
+    private String department;
+
+    @Column(name = "time_slot", length = 20)
+    private String timeSlot;
+
+    @Column(name = "reason", columnDefinition = "TEXT")
+    private String reason;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -51,6 +60,15 @@ public class Appointment {
 
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
+
+    public String getDepartment() { return department; }
+    public void setDepartment(String department) { this.department = department; }
+
+    public String getTimeSlot() { return timeSlot; }
+    public void setTimeSlot(String timeSlot) { this.timeSlot = timeSlot; }
+
+    public String getReason() { return reason; }
+    public void setReason(String reason) { this.reason = reason; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
