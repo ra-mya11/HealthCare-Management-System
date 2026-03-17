@@ -1,0 +1,75 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "C:\\Users\\bhuva\\Downloads\\HealthCareApp\\HealthCare-Management-System\\blockchain-healthcare-system\\blockchain-service\\contracts\\MedicalRecordManager.sol": {
+      "lastModificationDate": 1773679387626,
+      "contentHash": "7bb6ab717d700b6e57f960292ff7e9fa",
+      "sourceName": "contracts/MedicalRecordManager.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.19"
+      ],
+      "artifacts": [
+        "MedicalRecordManager"
+      ]
+    },
+    "C:\\Users\\bhuva\\Downloads\\HealthCareApp\\HealthCare-Management-System\\blockchain-healthcare-system\\blockchain-service\\contracts\\MedicalRecords.sol": {
+      "lastModificationDate": 1773679387627,
+      "contentHash": "8f72f14eb47cb8706eed7dd8e4153307",
+      "sourceName": "contracts/MedicalRecords.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.19"
+      ],
+      "artifacts": [
+        "MedicalRecords"
+      ]
+    }
+  }
+}
